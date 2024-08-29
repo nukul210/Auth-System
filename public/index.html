@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Welcome to the Auth System</h1>
+    <div style="display: none" class="links">
+      <a href="/admin.html">Admin</a>
+      <a class="logout-button" href="/api/users/logout">Logout</a>
+    </div>
+    <div id="user-info"></div>
+    <script>
+      // Define an async function to use await
+      async function checkUserSession() {
+        try {
+          // Check if the user is logged in
+          const response = await fetch("/home");
+          const data = await response.json();
+
+          if (data.msg === "Session already exists") {
+            document.getElementById(
+              "user-info"
+            ).innerHTML = `<p>You are logged in</p>`;
+
+            const linksDiv = document.querySelector(".links");
+
+            linksDiv.style.display = "block";
+          } else if (data.msg === "Unauthenticated!") {
+            window.location.href = "/login.html";
+          }
+        } catch (error) {
+          console.error("Error fetching user session:", error);
+        }
+      }
+
+      // Call the async function
+      checkUserSession();
+    </script>
+  </body>
+</html>

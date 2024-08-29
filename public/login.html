@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Login</h1>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <p id="message"></p>
+    <p>Don't have an account? <a href="/register.html">Sign Up</a></p>
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+          document.getElementById("message").textContent = data.msg;
+
+          if (data.user) {
+            window.location.href = "/";
+          }
+        });
+
+      // Define an async function to use await
+      async function checkUserSession() {
+        try {
+          // Check if the user is logged in
+          const response = await fetch("/home");
+          const data = await response.json();
+
+          if (data.msg === "Session already exists") {
+            window.location.href = "/";
+          }
+        } catch (error) {
+          console.error("Error fetching user session:", error);
+        }
+      }
+
+      // Call the async function
+      checkUserSession();
+    </script>
+  </body>
+</html>
